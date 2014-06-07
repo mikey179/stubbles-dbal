@@ -114,8 +114,7 @@ class PdoDatabaseConnection implements DatabaseConnection
         }
 
         try {
-            $pdoCreator = $this->getPdoCreator();
-            $this->pdo  = $pdoCreator($this->configuration);
+            $this->pdo = $this->configuration->applyCredentials($this->pdoCreator());
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             if ($this->configuration->hasInitialQuery()) {
                 $this->pdo->query($this->configuration->initialQuery());
@@ -131,25 +130,27 @@ class PdoDatabaseConnection implements DatabaseConnection
      *
      * @return  \Closure
      */
-    private function getPdoCreator()
+    private function pdoCreator()
     {
         if (null !== $this->pdoCreator) {
             return $this->pdoCreator;
         }
 
-        return function(DatabaseConfiguration $configuration)
+        return function($username, $password)
                {
-                   if (!$configuration->hasDriverOptions()) {
-                       return new PDO($configuration->dsn(),
-                                      $configuration->userName(),
-                                      $configuration->password()
+                   if (!$this->configuration->hasDriverOptions()) {
+                       return new PDO(
+                               $this->configuration->dsn(),
+                               $username,
+                               $password
                        );
                    }
 
-                   return new PDO($configuration->dsn(),
-                                  $configuration->userName(),
-                                  $configuration->password(),
-                                  $configuration->driverOptions()
+                   return new PDO(
+                           $this->configuration->dsn(),
+                           $username,
+                           $password,
+                           $this->configuration->driverOptions()
                    );
                };
     }

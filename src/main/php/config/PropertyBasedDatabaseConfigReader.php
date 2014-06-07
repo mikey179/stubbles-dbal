@@ -125,7 +125,7 @@ class PropertyBasedDatabaseConfigReader implements DatabaseConfigReader
             $id = DatabaseConfiguration::DEFAULT_ID;
         }
 
-        $properties = $this->readProperties()->getSection($id);
+        $properties = $this->readProperties()->section($id);
         if (!isset($properties['dsn'])) {
             throw new ConfigurationException('Missing dsn property in database configuration with id ' . $id);
         }

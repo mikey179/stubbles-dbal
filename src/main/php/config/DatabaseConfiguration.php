@@ -153,16 +153,6 @@ class DatabaseConfiguration
     }
 
     /**
-     * returns the user name
-     *
-     * @return  string
-     */
-    public function userName()
-    {
-        return $this->userName;
-    }
-
-    /**
      * sets user password for database login
      *
      * @param   string  $password
@@ -175,13 +165,38 @@ class DatabaseConfiguration
     }
 
     /**
-     * returns the user password
+     * applies credentials to given connector
      *
-     * @return  string
+     * Given connector should accept username and password. For example, here's
+     * how a connector for creating a \PDO instance might look like:
+     * <code>
+     * function($username, $password)
+     * {
+     *     if (!$this->configuration->hasDriverOptions()) {
+     *         return new \PDO(
+     *                 $this->configuration->dsn(),
+     *                 $username,
+     *                 $password
+     *         );
+     *     }
+     *
+     *     return new \PDO(
+     *             $this->configuration->dsn(),
+     *             $username,
+     *             $password,
+     *             $this->configuration->driverOptions()
+     *     );
+     * }
+     * </code>
+     * The return value is anything that the given connector returns.
+     *
+     * @param  \Closure  $connector
+     * @return  mixed
+     * @since   3.0.0
      */
-    public function password()
+    public function applyCredentials(\Closure $connector)
     {
-        return $this->password;
+        return $connector($this->userName, $this->password);
     }
 
     /**
