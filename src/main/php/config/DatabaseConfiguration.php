@@ -8,6 +8,7 @@
  * @package  stubbles\db
  */
 namespace stubbles\db\config;
+use stubbles\lang\SecureString;
 /**
  * Configuration for a database connection.
  */
@@ -38,7 +39,7 @@ class DatabaseConfiguration
     /**
      * password
      *
-     * @type  string
+     * @type  SecureString
      */
     private $password;
     /**
@@ -86,7 +87,7 @@ class DatabaseConfiguration
         }
 
         if (isset($properties['password'])) {
-            $self->password = $properties['password'];
+            $self->password = SecureString::create($properties['password']);
             unset($properties['password']);
         }
 
@@ -112,8 +113,9 @@ class DatabaseConfiguration
      */
     public function __construct($id, $dsn)
     {
-        $this->id  = $id;
-        $this->dsn = $dsn;
+        $this->id       = $id;
+        $this->dsn      = $dsn;
+        $this->password = SecureString::forNull();
     }
 
     /**
@@ -153,50 +155,35 @@ class DatabaseConfiguration
     }
 
     /**
+     * returns user name
+     *
+     * @return  string
+     */
+    public function getUserName()
+    {
+        return $this->userName;
+    }
+
+    /**
      * sets user password for database login
      *
-     * @param   string  $password
+     * @param   SecureString  $password
      * @return  DatabaseConfiguration
      */
-    public function setPassword($password)
+    public function setPassword(SecureString $password)
     {
         $this->password = $password;
         return $this;
     }
 
     /**
-     * applies credentials to given connector
+     * returns password for database login
      *
-     * Given connector should accept username and password. For example, here's
-     * how a connector for creating a \PDO instance might look like:
-     * <code>
-     * function($username, $password)
-     * {
-     *     if (!$this->configuration->hasDriverOptions()) {
-     *         return new \PDO(
-     *                 $this->configuration->dsn(),
-     *                 $username,
-     *                 $password
-     *         );
-     *     }
-     *
-     *     return new \PDO(
-     *             $this->configuration->dsn(),
-     *             $username,
-     *             $password,
-     *             $this->configuration->driverOptions()
-     *     );
-     * }
-     * </code>
-     * The return value is anything that the given connector returns.
-     *
-     * @param  \Closure  $connector
-     * @return  mixed
-     * @since   3.0.0
+     * @return  string
      */
-    public function applyCredentials(\Closure $connector)
+    public function getPassword()
     {
-        return $connector($this->userName, $this->password);
+        return $this->password->unveil();
     }
 
     /**

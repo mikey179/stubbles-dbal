@@ -114,7 +114,8 @@ class PdoDatabaseConnection implements DatabaseConnection
         }
 
         try {
-            $this->pdo = $this->configuration->applyCredentials($this->pdoCreator());
+            $pdoCreator = $this->pdoCreator();
+            $this->pdo  = $pdoCreator();
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             if ($this->configuration->hasInitialQuery()) {
                 $this->pdo->query($this->configuration->initialQuery());
@@ -136,20 +137,20 @@ class PdoDatabaseConnection implements DatabaseConnection
             return $this->pdoCreator;
         }
 
-        return function($username, $password)
+        return function()
                {
                    if (!$this->configuration->hasDriverOptions()) {
                        return new PDO(
                                $this->configuration->dsn(),
-                               $username,
-                               $password
+                               $this->configuration->getUserName(),
+                               $this->configuration->getPassword()
                        );
                    }
 
                    return new PDO(
                            $this->configuration->dsn(),
-                           $username,
-                           $password,
+                           $this->configuration->getUserName(),
+                           $this->configuration->getPassword(),
                            $this->configuration->driverOptions()
                    );
                };

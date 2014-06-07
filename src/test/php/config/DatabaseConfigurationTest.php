@@ -8,6 +8,7 @@
  * @package  stubbles\db
  */
 namespace stubbles\db\config;
+use stubbles\lang\SecureString;
 /**
  * Test for stubbles\db\config\DatabaseConfiguration.
  *
@@ -48,48 +49,35 @@ class DatabaseConfigurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param   string  $expectedUserName
-     * @param   string  $expectedPassword
-     * @return  \Closure
+     * @test
      */
-    private function createMockConnector($expectedUserName, $expectedPassword)
+    public function hasNoUserNameByDefault()
     {
-        return function($userName, $password) use ($expectedUserName, $expectedPassword)
-        {
-            $this->assertEquals($expectedUserName, $userName);
-            $this->assertEquals($expectedPassword, $password);
-            return 'something';
-        };
+        $this->assertNull($this->dbConfig->getUserName());
     }
 
     /**
      * @test
      */
-    public function hasNoUserNameAndPasswordByDefault()
+    public function userNameCanBeSet()
     {
-        $this->dbConfig->applyCredentials($this->createMockConnector(null, null));
+        $this->assertEquals('mikey', $this->dbConfig->setUserName('mikey')->getUserName());
     }
 
     /**
      * @test
      */
-    public function userNameAndPasswordEqualsSetOnes()
+    public function hasNoPasswordByDefault()
     {
-        $this->dbConfig->setUserName('mikey')
-                       ->setPassword('secret')
-                       ->applyCredentials($this->createMockConnector('mikey', 'secret'));
+        $this->assertNull($this->dbConfig->getPassword());
     }
 
     /**
      * @test
-     * @since  3.0.0
      */
-    public function applyCredentialsReturnsReturnValueFromConnector()
+    public function passwordCanBeSet()
     {
-        $this->assertEquals(
-                'foo',
-                $this->dbConfig->applyCredentials(function() {return 'foo';})
-        );
+        $this->assertEquals('secret', $this->dbConfig->setPassword(SecureString::create('secret'))->getPassword());
     }
 
     /**
@@ -159,7 +147,8 @@ class DatabaseConfigurationTest extends \PHPUnit_Framework_TestCase
         $dbConfig = DatabaseConfiguration::fromArray('foo', 'dsn:bar', []);
         $this->assertEquals('foo', $dbConfig->id());
         $this->assertEquals('dsn:bar', $dbConfig->dsn());
-        $dbConfig->applyCredentials($this->createMockConnector(null, null));
+        $this->assertNull($dbConfig->getUserName());
+        $this->assertNull($dbConfig->getPassword());
         $this->assertFalse($dbConfig->hasDriverOptions());
         $this->assertEquals([], $dbConfig->driverOptions());
         $this->assertFalse($dbConfig->hasInitialQuery());
@@ -182,7 +171,8 @@ class DatabaseConfigurationTest extends \PHPUnit_Framework_TestCase
                     );
         $this->assertEquals('foo', $dbConfig->id());
         $this->assertEquals('dsn:bar', $dbConfig->dsn());
-        $dbConfig->applyCredentials($this->createMockConnector('root', 'secret'));
+        $this->assertEquals('root', $dbConfig->getUserName());
+        $this->assertEquals('secret', $dbConfig->getPassword());
         $this->assertFalse($dbConfig->hasDriverOptions());
         $this->assertEquals([], $dbConfig->driverOptions());
         $this->assertTrue($dbConfig->hasInitialQuery());
