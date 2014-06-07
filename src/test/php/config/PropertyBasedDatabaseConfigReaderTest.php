@@ -168,7 +168,7 @@ username="root"');
 dsn="mysql:host=localhost;dbname=example"');
         $this->assertEquals('foo',
                             $this->propertyBasedConfigReader->readConfig('foo')
-                                                            ->getId()
+                                                            ->id()
         );
     }
 
@@ -181,7 +181,7 @@ dsn="mysql:host=localhost;dbname=example"');
 dsn="mysql:host=localhost;dbname=example"');
         $this->assertEquals('default',
                             $this->propertyBasedConfigReader->readConfig('foo')
-                                                            ->getId()
+                                                            ->id()
         );
     }
 
@@ -223,7 +223,7 @@ dsn="mysql:host=prod.example.com;dbname=example"')
         $this->assertEquals('mysql:host=localhost;dbname=example',
                             $this->propertyBasedConfigReader->setDescriptor('rdbms-test')
                                                             ->readConfig('foo')
-                                                            ->getDsn()
+                                                            ->dsn()
         );
     }
 

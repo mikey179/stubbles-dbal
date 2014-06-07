@@ -125,7 +125,7 @@ class DatabaseConfiguration
      *
      * @return  string
      */
-    public function getId()
+    public function id()
     {
         return $this->id;
     }
@@ -135,7 +135,7 @@ class DatabaseConfiguration
      *
      * @return  string
      */
-    public function getDsn()
+    public function dsn()
     {
         return $this->dsn;
     }
@@ -157,7 +157,7 @@ class DatabaseConfiguration
      *
      * @return  string
      */
-    public function getUserName()
+    public function userName()
     {
         return $this->userName;
     }
@@ -179,7 +179,7 @@ class DatabaseConfiguration
      *
      * @return  string
      */
-    public function getPassword()
+    public function password()
     {
         return $this->password;
     }
@@ -211,7 +211,7 @@ class DatabaseConfiguration
      *
      * @return  array
      */
-    public function getDriverOptions()
+    public function driverOptions()
     {
         return $this->driverOptions;
     }
@@ -243,7 +243,7 @@ class DatabaseConfiguration
      *
      * @return  string
      */
-    public function getInitialQuery()
+    public function initialQuery()
     {
         return $this->initialQuery;
     }
@@ -267,7 +267,7 @@ class DatabaseConfiguration
      * @return  string
      * @since   2.1.0
      */
-    public function getDetails()
+    public function details()
     {
         return $this->details;
     }
@@ -280,7 +280,7 @@ class DatabaseConfiguration
      * @return  string
      * @since   2.2.0
      */
-    public function getProperty($name, $default = null)
+    public function property($name, $default = null)
     {
         if (isset($this->properties[$name])) {
             return $this->properties[$name];

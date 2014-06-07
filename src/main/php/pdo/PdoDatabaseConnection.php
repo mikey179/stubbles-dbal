@@ -74,7 +74,7 @@ class PdoDatabaseConnection implements DatabaseConnection
      */
     public function dsn()
     {
-        return $this->configuration->getDsn();
+        return $this->configuration->dsn();
     }
 
     /**
@@ -85,7 +85,7 @@ class PdoDatabaseConnection implements DatabaseConnection
      */
     public function details()
     {
-        return $this->configuration->getDetails();
+        return $this->configuration->details();
     }
 
     /**
@@ -98,7 +98,7 @@ class PdoDatabaseConnection implements DatabaseConnection
      */
     public function property($name, $default = null)
     {
-        return $this->configuration->getProperty($name, $default);
+        return $this->configuration->property($name, $default);
     }
 
     /**
@@ -118,7 +118,7 @@ class PdoDatabaseConnection implements DatabaseConnection
             $this->pdo  = $pdoCreator($this->configuration);
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             if ($this->configuration->hasInitialQuery()) {
-                $this->pdo->query($this->configuration->getInitialQuery());
+                $this->pdo->query($this->configuration->initialQuery());
             }
         } catch (PDOException $pdoe) {
             throw new DatabaseException($pdoe->getMessage(), $pdoe);
@@ -140,16 +140,16 @@ class PdoDatabaseConnection implements DatabaseConnection
         return function(DatabaseConfiguration $configuration)
                {
                    if (!$configuration->hasDriverOptions()) {
-                       return new PDO($configuration->getDsn(),
-                                      $configuration->getUserName(),
-                                      $configuration->getPassword()
+                       return new PDO($configuration->dsn(),
+                                      $configuration->userName(),
+                                      $configuration->password()
                        );
                    }
 
-                   return new PDO($configuration->getDsn(),
-                                  $configuration->getUserName(),
-                                  $configuration->getPassword(),
-                                  $configuration->getDriverOptions()
+                   return new PDO($configuration->dsn(),
+                                  $configuration->userName(),
+                                  $configuration->password(),
+                                  $configuration->driverOptions()
                    );
                };
     }
